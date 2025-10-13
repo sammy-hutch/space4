@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1rdfbwq35skk"]
+
+[ext_resource type="Texture2D" uid="uid://bqcbej6ll2omq" path="res://sprites/Enemy.png" id="1_7p1mj"]
+
+[node name="Enemy" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_7p1mj")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(132.204, 160.959, 23.8802, 31.4355)

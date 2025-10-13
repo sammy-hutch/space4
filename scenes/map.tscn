@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=4 uid="uid://b16yojpr20b5x"]
+
+[ext_resource type="Texture2D" uid="uid://br8y2j8np14kr" path="res://sprites/terrain.png" id="1_paxxb"]
+[ext_resource type="Script" uid="uid://c3j7k65fopsni" path="res://scripts/tile_map_layer.gd" id="2_gldc4"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sofiq"]
+texture = ExtResource("1_paxxb")
+0:0/0 = 0
+0:1/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_yu7el"]
+sources/0 = SubResource("TileSetAtlasSource_sofiq")
+
+[node name="Map" type="Node2D"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAD+////AAAAAAAAAAD/////AAAAAAAAAAD///7/AAAAAAAAAAD+//7/AAAAAAAAAAD8////AAAAAAEAAAD9////AAAAAAEAAAD9//7/AAAAAAEAAAD8//7/AAAAAAEAAAA=")
+tile_set = SubResource("TileSet_yu7el")
+script = ExtResource("2_gldc4")
