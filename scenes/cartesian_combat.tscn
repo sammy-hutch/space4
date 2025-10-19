@@ -1,25 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://ciucepspl77as"]
+[gd_scene load_steps=2 format=3 uid="uid://ciucepspl77as"]
 
 [ext_resource type="Script" uid="uid://btkyncmqu4tce" path="res://scripts/cartesian_combat.gd" id="1_cttc2"]
-[ext_resource type="Texture2D" uid="uid://br8y2j8np14kr" path="res://sprites/terrain.png" id="1_j7yys"]
-[ext_resource type="Script" uid="uid://c3j7k65fopsni" path="res://scripts/tile_map_layer.gd" id="2_cttc2"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cttc2"]
-texture = ExtResource("1_j7yys")
-0:0/0 = 0
-0:1/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_sofiq"]
-sources/0 = SubResource("TileSetAtlasSource_cttc2")
 
 [node name="CartesianCombat" type="Node2D"]
 script = ExtResource("1_cttc2")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-texture_filter = 1
-tile_set = SubResource("TileSet_sofiq")
-script = ExtResource("2_cttc2")
-
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
-zoom = Vector2(1.4, 1.4)
+zoom = Vector2(2, 2)

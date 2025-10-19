@@ -1,14 +1,14 @@
 extends TileMapLayer
 
-var MAP_TILE_WIDTH = 50
-var MAP_TILE_HEIGHT = 25
-var TILE_SIZE = 16
-
+var MAP_TILE_WIDTH = 35
+var MAP_TILE_HEIGHT = 20
+const TILE_SIZE = 16
+var map: Array[Array]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	var schema = generate_empty_schema()
-	var basic_map = generate_basic_map(schema)
+	map = generate_basic_map(schema)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -19,19 +19,19 @@ func _process(delta: float) -> void:
 func generate_empty_schema():
 	# create empty schema
 	print("creating schema")
-	var schema = []
+	var schema: Array[Array] = []
 	for r in range (MAP_TILE_HEIGHT):
 		var row = []
 		for tile in range(MAP_TILE_WIDTH):
 			row.append(-1)
 		schema.append(row)
 	print("schema created")
-	print(schema)
+	#print(schema)
 	return schema
 
 func generate_basic_map(schema):
 	print("generating map")
-	var map = schema
+	var map: Array[Array] = schema
 	
 	# add borders by default
 	for y in range(MAP_TILE_HEIGHT):
@@ -58,29 +58,34 @@ func generate_basic_map(schema):
 				set_cell(Vector2i(x,y), 0, Vector2i(0,0))
 			tiles_to_fill -= 1
 	print("map generated")
-	print(map)
+	#print(map)
 	return map
 
 func calculate_barrier_chance(x, y, map):
 	# set initial probability for barrier to spawn
-	var p = 0.4
+	var p = 0.3
 	# set clustering strength
-	var c = 0.05
+	var c = 0.2
 	
 	#cluster barriers by making them more likely near other barriers
 	var adjacent_tile_array = [
-		map[y-1][x-1],
 		map[y-1][x],
-		map[y-1][x+1],
 		map[y][x-1],
 		map[y][x+1],
-		map[y+1][x-1],
 		map[y+1][x],
+	]
+	var diagonal_tile_array = [
+		map[y-1][x-1],
+		map[y-1][x+1],
+		map[y+1][x-1],
 		map[y+1][x+1],
 	]
 	for tile in adjacent_tile_array:
 		if tile == 1: p += c
 		if tile == 0: p -= c
+	for tile in diagonal_tile_array:
+		if tile == 1: p += 0.25*c
+		if tile == 0: p -= 0.25*c
 	
 	return p
 	

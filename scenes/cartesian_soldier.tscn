@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0b80wfsfghma"]
+
+[ext_resource type="Script" uid="uid://djagqp8nc5fcm" path="res://scripts/soldier.gd" id="1_0ng55"]
+[ext_resource type="Texture2D" uid="uid://blrfi8tv1l3ye" path="res://icon.svg" id="2_u1jnw"]
+
+[node name="Soldier" type="Node2D"]
+script = ExtResource("1_0ng55")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("2_u1jnw")
