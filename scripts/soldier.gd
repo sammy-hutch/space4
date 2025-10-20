@@ -12,6 +12,7 @@ var soldiers_data: Dictionary
 
 @onready var tile_map_layer: TileMapLayer = $TileMapLayer
 @onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var clickbox: Area2D = $Sprite2D/ClickBox
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -30,6 +31,10 @@ func _ready() -> void:
 	
 	# spawn soldier
 	spawn()
+	tile_map_layer.visible = false
+	
+	if clickbox:
+		clickbox.input_event.connect(_on_area_2d_input_event)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -75,25 +80,51 @@ func spawn():
 			located = true
 
 func pathfinding():
+	var map: Array[Array] = map_data.map
 	# create start of navigable area dict
-	var navigable_area = {
-		"0_0": { "dist": 0, "x": 0, "y": 0 }
+	var nav_area = {
+		"0_0": { "dist": 0, "y": 0, "x": 0 }
 	}
 	
-	# iterate over dict to scan for available areas and add to dict
-	for tile in navigable_area:
-		# set vars
-		var data = navigable_area[tile]
-		var dist = data["dist"] + 1
-		var x = data["x"]
-		var y = data["y"]
+	var counter = 1
+	while counter <= speed:
+		# iterate over dict to scan for available areas and add to dict
+		for tile in nav_area.values():
+			# only check latest tiles
+			if tile["dist"] == counter-1:
+				# set vars
+				var dist = counter
+				var x = tile["x"]
+				var y = tile["y"]
+				
+				#create adjacents
+				var adjacents = {
+					"n": { "dist": dist, "x": x, "y": y-1 },
+					"e": { "dist": dist, "x": x+1, "y": y },
+					"s": { "dist": dist, "x": x, "y": y+1 },
+					"w": { "dist": dist, "x": x-1, "y": y }
+				}
+				
+				# check if space is navigable, and if so assign to dict
+				for a in adjacents.values():
+					var a_x = a["x"]
+					var a_y = a["y"]
+					var coords = str(a_y) + "_" + str(a_x)
+					if not nav_area.has(coords) \
+					and map[(a_y + tile_y)][(a_x + tile_x)] != 1:
+						nav_area[coords] = { "dist": dist, "y": a_y, "x": a_x }
+						tile_map_layer.set_cell(Vector2i(a_x,a_y), 0, Vector2i(0,0))
+						print("adding to nav_area coords: " + str(coords) + " dist: " + str(dist))
 		
-		#create adjacents
-		var adjacents = {
-			"n": { "dist": dist, "x": x, "y": y-1 },
-			"e": { "dist": dist, "x": x+1, "y": y },
-			"s": { "dist": dist, "x": x, "y": y+1 },
-			"w": { "dist": dist, "x": x-1, "y": y }
-		}
-		
-		#for a in adjacents.values():
+		# increment counter after checking all tiles
+		counter += 1
+
+
+func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		active = !active
+		if active:
+			tile_map_layer.visible = true
+			pathfinding()
+		if !active:
+			tile_map_layer.visible = false

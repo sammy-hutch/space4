@@ -63,9 +63,9 @@ func generate_basic_map(schema):
 
 func calculate_barrier_chance(x, y, map):
 	# set initial probability for barrier to spawn
-	var p = 0.3
+	var p = 0.4
 	# set clustering strength
-	var c = 0.2
+	var c = 0.25
 	
 	#cluster barriers by making them more likely near other barriers
 	var adjacent_tile_array = [
@@ -84,8 +84,8 @@ func calculate_barrier_chance(x, y, map):
 		if tile == 1: p += c
 		if tile == 0: p -= c
 	for tile in diagonal_tile_array:
-		if tile == 1: p += 0.25*c
-		if tile == 0: p -= 0.25*c
+		if tile == 1: p += 0.15*c
+		if tile == 0: p -= 0.15*c
 	
 	return p
 	
