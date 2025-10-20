@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 		#generate_new_map()
 
 func generate_new_map():
-	print("generating new map")
+	#print("generating new map")
 	var new_map = preload("res://scenes/map.tscn")
 	if new_map:
 		var current_new_map = new_map.instantiate()
@@ -43,19 +43,19 @@ func generate_new_map():
 			map_node.queue_free()
 		add_child(current_new_map)
 		map_node = current_new_map
-		print("new map loaded")
-	else:
-		print("failed to load next map scene")
+		#print("new map loaded")
+	#else:
+		#print("failed to load next map scene")
 
-func spawn_soldiers(team, count, soldiers=soldiers_data):
+func spawn_soldiers(team, count):
 	var max_count = count
 	while count > 0:
 		# create new soldier child scene
 		var new_soldier = SoldierScene.instantiate()
 		var number = (max_count - (count - 1))
 		new_soldier.name = team + "_%d" % number
+		new_soldier.team = team
 		add_child(new_soldier)
-		new_soldier.spawn(team, map_node.get_node("TileMapLayer"), soldiers)
 		
 		# add new soldier's data to global tracker
 		var soldier_data = {
@@ -68,3 +68,8 @@ func spawn_soldiers(team, count, soldiers=soldiers_data):
 		
 		count -= 1
 	
+func get_map_data():
+	return map_node.get_node("TileMapLayer")
+
+func get_soldiers_data():
+	return soldiers_data
