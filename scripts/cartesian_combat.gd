@@ -61,8 +61,8 @@ func spawn_soldiers(team, count):
 		var soldier_data = {
 			"team": team,
 			"number": number,
-			"x_pos": new_soldier.tile_x,
-			"y_pos": new_soldier.tile_y
+			"x_pos": new_soldier.tile_pos.x,
+			"y_pos": new_soldier.tile_pos.y
 		}
 		soldiers_data[new_soldier.name] = soldier_data
 		

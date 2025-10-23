@@ -1,14 +1,15 @@
-extends Node2D
+extends CharacterBody2D
 
-var speed: int = 5
-var playable: bool = false
 var active: bool = false
 var available: bool = false
-var tile_x: int = 0
-var tile_y: int = 0
-var team: String = "none"
 var map_data: TileMapLayer
+var nav_area: Dictionary
+var playable: bool = false
+var speed: int = 5
 var soldiers_data: Dictionary
+var target_tile: Vector2
+var team: String = "none"
+var tile_pos: Vector2
 
 @onready var tile_map_layer: TileMapLayer = $TileMapLayer
 @onready var sprite_2d: Sprite2D = $Sprite2D
@@ -38,9 +39,29 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _physics_process(delta: float) -> void:
+	# try to move to mouse clicks
+	if active and target_tile:
+		tile_pos += target_tile
+		
+		# for now just teleport to position and deactivate
+		position = tile_pos * map_data.TILE_SIZE
+		deactivate()
+		
+		
 
+func _input(event: InputEvent):
+	# check for mouse clicks in navigable area
+	if active:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			var event_position = get_local_mouse_position()
+			var event_tile = tile_map_layer.local_to_map(event_position)
+			var coords = str(event_tile.y) + "_" + str(event_tile.x)
+			if nav_area.has(coords):
+				target_tile = event_tile
+			else: 
+				deactivate()
+			
 
 func spawn():
 	# set existing soldier positions array
@@ -73,19 +94,23 @@ func spawn():
 			x = randi_range(round(0.75 * (map_width-1)), map_width-1)
 		# check if tile is open, non-occupied space
 		if map[y][x] == 0 and soldiers_pos.has(str(x) + "_" + str(y)) == false:
-			tile_x = x
-			tile_y = y
+			tile_pos = Vector2(x, y)
 			position.x = x * map_data.TILE_SIZE
 			position.y = y * map_data.TILE_SIZE
 			located = true
 
-func pathfinding():
+
+func deactivate():
+	active = false
+	target_tile = Vector2(0,0)
+	tile_map_layer.visible = false
+	nav_area.clear()
+	tile_map_layer.clear()
+
+
+func generate_nav_map():
+	nav_area = { "0_0": { "dist": 0, "y": 0, "x": 0 } }
 	var map: Array[Array] = map_data.map
-	# create start of navigable area dict
-	var nav_area = {
-		"0_0": { "dist": 0, "y": 0, "x": 0 }
-	}
-	
 	var counter = 1
 	while counter <= speed:
 		# iterate over dict to scan for available areas and add to dict
@@ -111,13 +136,23 @@ func pathfinding():
 					var a_y = a["y"]
 					var coords = str(a_y) + "_" + str(a_x)
 					if not nav_area.has(coords) \
-					and map[(a_y + tile_y)][(a_x + tile_x)] != 1:
+					and map[(a_y + tile_pos.y)][(a_x + tile_pos.x)] != 1:
 						nav_area[coords] = { "dist": dist, "y": a_y, "x": a_x }
 						tile_map_layer.set_cell(Vector2i(a_x,a_y), 0, Vector2i(0,0))
-						print("adding to nav_area coords: " + str(coords) + " dist: " + str(dist))
 		
 		# increment counter after checking all tiles
 		counter += 1
+
+
+# scans map for valid targets and returns them as a list of coords
+func scan_for_targets():
+	pass
+
+
+# provided with a target, find_path() calculates shortest route to that target
+# and returns series of tiles as a "path"
+func find_path(target: Vector2):
+	pass
 
 
 func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
@@ -125,6 +160,6 @@ func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) 
 		active = !active
 		if active:
 			tile_map_layer.visible = true
-			pathfinding()
+			generate_nav_map()
 		if !active:
-			tile_map_layer.visible = false
+			deactivate()

@@ -14,7 +14,7 @@ sources/0 = SubResource("TileSetAtlasSource_2seb5")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u1jnw"]
 size = Vector2(111.111, 111.111)
 
-[node name="Soldier" type="Node2D"]
+[node name="Soldier" type="CharacterBody2D"]
 script = ExtResource("1_0ng55")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -28,7 +28,6 @@ texture = ExtResource("2_u1jnw")
 [node name="ClickBox" type="Area2D" parent="Sprite2D"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/ClickBox"]
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_u1jnw")
 
 [connection signal="input_event" from="Sprite2D/ClickBox" to="." method="_on_area_2d_input_event"]
