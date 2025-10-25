@@ -18,20 +18,29 @@ var tile_pos: Vector2
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# get relevant vars from parent
-	if get_parent():
-		if get_parent().has_method("get_map_data"):
-			map_data = get_parent().get_map_data()
-		else:
-			printerr("soldier.gd: Parent does not have 'get_map_data' method")
-		if get_parent().has_method("get_soldiers_data"):
-			soldiers_data = get_parent().get_soldiers_data()
-		else:
-			printerr("soldier.gd: Parent does not have 'get_soldiers_data' method")
-	else:
+	var combat_manager = get_parent()
+	if not combat_manager:
 		printerr("soldier.gd: Parent not found")
+	
+	if combat_manager.has_method("get_map_data"):
+		map_data = combat_manager.get_map_data()
+	else:
+		printerr("soldier.gd: Parent does not have 'get_map_data' method")
+	
+	if combat_manager.has_method("get_soldiers_data"):
+		soldiers_data = combat_manager.get_soldiers_data()
+	else:
+		printerr("soldier.gd: Parent does not have 'get_soldiers_data' method")
 	
 	# spawn soldier
 	spawn()
+	
+	# register soldier to combat manager global tracker
+	if combat_manager.has_method("register_soldier"):
+		combat_manager.register_soldier(self)
+	else:
+		printerr("soldier.gd: Parent does not have 'get_soldiers_data' method")
+	
 	tile_map_layer.visible = false
 	
 	if clickbox:
@@ -64,10 +73,8 @@ func _input(event: InputEvent):
 			
 
 func spawn():
-	# set existing soldier positions array
-	var soldiers_pos = []
-	for soldier in soldiers_data.values():
-		soldiers_pos.append(str(soldier["x_pos"]) + "_" + str(soldier["y_pos"]))
+	# collect latest soldier positions
+	var soldiers_pos = get_parent().get_team_positions(["blue", "red"])
 	
 	# set colour of soldier
 	if team == "blue":
@@ -93,7 +100,7 @@ func spawn():
 		elif team == "red":
 			x = randi_range(round(0.75 * (map_width-1)), map_width-1)
 		# check if tile is open, non-occupied space
-		if map[y][x] == 0 and soldiers_pos.has(str(x) + "_" + str(y)) == false:
+		if map[y][x] == 0 and soldiers_pos.values().has(Vector2(x,y)) == false:
 			tile_pos = Vector2(x, y)
 			position.x = x * map_data.TILE_SIZE
 			position.y = y * map_data.TILE_SIZE
@@ -111,6 +118,7 @@ func deactivate():
 func generate_nav_map():
 	nav_area = { "0_0": { "dist": 0, "y": 0, "x": 0 } }
 	var map: Array[Array] = map_data.map
+	var soldiers_pos = get_parent().get_team_positions(["blue", "red"])
 	var counter = 1
 	while counter <= speed:
 		# iterate over dict to scan for available areas and add to dict
@@ -136,7 +144,8 @@ func generate_nav_map():
 					var a_y = a["y"]
 					var coords = str(a_y) + "_" + str(a_x)
 					if not nav_area.has(coords) \
-					and map[(a_y + tile_pos.y)][(a_x + tile_pos.x)] != 1:
+					and map[(a_y + tile_pos.y)][(a_x + tile_pos.x)] != 1 \
+					and soldiers_pos.values().has(Vector2((a_x + tile_pos.x) , (a_y + tile_pos.y))) == false:
 						nav_area[coords] = { "dist": dist, "y": a_y, "x": a_x }
 						tile_map_layer.set_cell(Vector2i(a_x,a_y), 0, Vector2i(0,0))
 		

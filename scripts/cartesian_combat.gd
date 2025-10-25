@@ -5,7 +5,7 @@ const min_zoom = Vector2(0.1, 0.1)
 const soldier_count: int = 1
 
 
-var soldiers_data: Dictionary = {}
+var soldiers: Dictionary = {}
 var SoldierScene: PackedScene = preload("res://scenes/cartesian_soldier.tscn")
 
 @onready var map_node: Node2D
@@ -57,19 +57,39 @@ func spawn_soldiers(team, count):
 		new_soldier.team = team
 		add_child(new_soldier)
 		
-		# add new soldier's data to global tracker
-		var soldier_data = {
-			"team": team,
-			"number": number,
-			"x_pos": new_soldier.tile_pos.x,
-			"y_pos": new_soldier.tile_pos.y
-		}
-		soldiers_data[new_soldier.name] = soldier_data
+		# add new soldier to global tracker
+		register_soldier(new_soldier)
 		
 		count -= 1
+
+func register_soldier(soldier_node: Node):
+	var soldier_id = soldier_node.name
+	if soldier_id in soldiers:
+		push_warning("Soldier with ID '%s' already registered!" % soldier_id)
+		return
+	soldiers[soldier_id] = soldier_node
+
+func unregister_soldier(soldier_node: Node):
+	var soldier_id = soldier_node.name
+	if soldier_id in soldiers:
+		soldiers.erase(soldier_id)
+
+func get_soldier_position(soldier_id: String) -> Vector2:
+	if soldiers.has(soldier_id):
+		return soldiers[soldier_id].tile_pos
+	push_warning("Soldier '%s' not found!" % soldier_id)
+	return Vector2.ZERO
+
+func get_team_positions(teams: Array) -> Dictionary:
+	var all_positions: Dictionary = {}
+	for soldier in soldiers:
+		for team in teams:
+			if soldiers[soldier].team == team:
+				all_positions[soldier] = soldiers[soldier].tile_pos
+	return all_positions
 	
 func get_map_data():
 	return map_node.get_node("TileMapLayer")
 
 func get_soldiers_data():
-	return soldiers_data
+	return soldiers
