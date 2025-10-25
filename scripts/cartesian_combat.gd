@@ -30,12 +30,8 @@ func _process(delta: float) -> void:
 			camera_2d.zoom = new_zoom
 		print("new zoom")
 		print(camera_2d.zoom)
-	
-	#if Input.is_action_just_pressed("load new map"):
-		#generate_new_map()
 
 func generate_new_map():
-	#print("generating new map")
 	var new_map = preload("res://scenes/map.tscn")
 	if new_map:
 		var current_new_map = new_map.instantiate()
@@ -43,9 +39,8 @@ func generate_new_map():
 			map_node.queue_free()
 		add_child(current_new_map)
 		map_node = current_new_map
-		#print("new map loaded")
-	#else:
-		#print("failed to load next map scene")
+	else:
+		print("failed to load next map scene")
 
 func spawn_soldiers(team, count):
 	var max_count = count
@@ -56,10 +51,6 @@ func spawn_soldiers(team, count):
 		new_soldier.name = team + "_%d" % number
 		new_soldier.team = team
 		add_child(new_soldier)
-		
-		# add new soldier to global tracker
-		register_soldier(new_soldier)
-		
 		count -= 1
 
 func register_soldier(soldier_node: Node):

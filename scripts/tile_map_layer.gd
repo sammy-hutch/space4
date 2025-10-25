@@ -18,19 +18,15 @@ func _process(delta: float) -> void:
 
 func generate_empty_schema():
 	# create empty schema
-	print("creating schema")
 	var schema: Array[Array] = []
 	for r in range (MAP_TILE_HEIGHT):
 		var row = []
 		for tile in range(MAP_TILE_WIDTH):
 			row.append(-1)
 		schema.append(row)
-	print("schema created")
-	#print(schema)
 	return schema
 
 func generate_basic_map(schema):
-	print("generating map")
 	var map: Array[Array] = schema
 	
 	# add borders by default
@@ -57,8 +53,6 @@ func generate_basic_map(schema):
 				map[y][x] = 0
 				set_cell(Vector2i(x,y), 0, Vector2i(0,0))
 			tiles_to_fill -= 1
-	print("map generated")
-	#print(map)
 	return map
 
 func calculate_barrier_chance(x, y, map):
