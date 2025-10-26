@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://c0b80wfsfghma"]
+
+[ext_resource type="Script" uid="uid://djagqp8nc5fcm" path="res://scripts/soldier.gd" id="1_0ng55"]
+[ext_resource type="Texture2D" uid="uid://k7tl1aqaaxye" path="res://sprites/hitbox.png" id="2_qjnta"]
+[ext_resource type="Texture2D" uid="uid://blrfi8tv1l3ye" path="res://icon.svg" id="2_u1jnw"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2seb5"]
+texture = ExtResource("2_qjnta")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_1b8b2"]
+sources/0 = SubResource("TileSetAtlasSource_2seb5")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u1jnw"]
+size = Vector2(111.111, 111.111)
+
+[node name="Soldier" type="CharacterBody2D"]
+script = ExtResource("1_0ng55")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_1b8b2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(8, 8)
+scale = Vector2(0.09, 0.09)
+texture = ExtResource("2_u1jnw")
+
+[node name="ClickBox" type="Area2D" parent="Sprite2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/ClickBox"]
+shape = SubResource("RectangleShape2D_u1jnw")
+
+[connection signal="input_event" from="Sprite2D/ClickBox" to="." method="_on_area_2d_input_event"]
