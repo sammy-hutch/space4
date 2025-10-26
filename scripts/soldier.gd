@@ -61,15 +61,20 @@ func _ready() -> void:
 func spawn():
 	# collect latest soldier positions
 	var soldiers_pos = get_parent().get_team_positions(["blue", "red"])
+	var teams = get_parent().get_teams_data()
 	
-	# set colour of soldier
+	# set rotation of soldier
 	if team == "blue":
-		sprite_2d.modulate = Color(0.5, 0.5, 1, 1)
 		sprite_2d.rotation = 0.5*PI
-		playable = true
 	elif team == "red":
-		sprite_2d.modulate = Color(1, 0.5, 0.5, 1)
 		sprite_2d.rotation = -0.5*PI
+	
+	# make soldier playable if on human-controlled team
+	if teams[team]["type"] == "human":
+		playable = true
+	
+	# unready soldier
+	unready_soldier()
 	
 	# set position of soldier
 	var map: Array[Array] = map_data.map
@@ -103,11 +108,25 @@ func deactivate():
 	path.clear()
 	tile_pos = map_data.local_to_map(position)
 
+func ready_soldier():
+	available = true
+	if team == "blue":
+		sprite_2d.modulate = Color(0.5, 0.5, 1, 1)
+	elif team == "red":
+		sprite_2d.modulate = Color(1, 0.5, 0.5, 1)
+
+func unready_soldier():
+	available = false
+	if team == "blue":
+		sprite_2d.modulate = Color(0.25, 0.25, 0.5, 1)
+	elif team == "red":
+		sprite_2d.modulate = Color(0.5, 0.25, 0.25, 1)
+	
 
 ###### INPUT FUNCTIONS ######
 func _input(event: InputEvent):
 	# check for mouse clicks in navigable area
-	if active:
+	if active and playable:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 			var event_position = get_local_mouse_position()
 			var event_tile = map_data.local_to_map(event_position)
@@ -150,6 +169,7 @@ func _move_to_next_tile():
 		path = []
 		path_index = 0
 		deactivate()
+		unready_soldier() # for now, unready after move
 		return
 	
 	var next_tile_coords: Vector2i = path[path_index]
@@ -296,7 +316,10 @@ func get_world_position_of_tile_centre(tile_coords: Vector2i) -> Vector2:
 ###### SIGNAL FUNCTIONS ######
 
 func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+	if event is InputEventMouseButton \
+	and event.button_index == MOUSE_BUTTON_LEFT \
+	and event.is_pressed() \
+	and playable and available:
 		active = !active
 		if active:
 			tile_map_layer.visible = true
