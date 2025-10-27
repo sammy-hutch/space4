@@ -21,10 +21,18 @@ var movement_tween: Tween = null
 var path: Array = []
 var path_index: int = 0
 var speed = 100
+###### COLOUR VARS ######
+var bright_blue = Color(0.1, 0.5, 1, 1)
+var dark_blue = Color(0, 0.2, 0.7, 1)
+var bright_red = Color(1, 0, 0.1, 1)
+var dark_red = Color(0.7, 0., 0.05, 1)
 
 @onready var tile_map_layer: TileMapLayer = $TileMapLayer
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var clickbox: Area2D = $Sprite2D/ClickBox
+
+###### SIGNALS ######
+signal finished_move(character_node)
 
 
 ###### INIT FUNCTIONS ######
@@ -109,19 +117,21 @@ func deactivate():
 	tile_pos = map_data.local_to_map(position)
 
 func ready_soldier():
-	available = true
-	if team == "blue":
-		sprite_2d.modulate = Color(0.5, 0.5, 1, 1)
-	elif team == "red":
-		sprite_2d.modulate = Color(1, 0.5, 0.5, 1)
+	if !available:
+		available = true
+		if team == "blue":
+			sprite_2d.modulate = bright_blue
+		elif team == "red":
+			sprite_2d.modulate = bright_red
 
 func unready_soldier():
-	available = false
-	if team == "blue":
-		sprite_2d.modulate = Color(0.25, 0.25, 0.5, 1)
-	elif team == "red":
-		sprite_2d.modulate = Color(0.5, 0.25, 0.25, 1)
-	
+	if available:
+		available = false
+		if team == "blue":
+			sprite_2d.modulate = dark_blue
+		elif team == "red":
+			sprite_2d.modulate = dark_red
+
 
 ###### INPUT FUNCTIONS ######
 func _input(event: InputEvent):
@@ -170,6 +180,7 @@ func _move_to_next_tile():
 		path_index = 0
 		deactivate()
 		unready_soldier() # for now, unready after move
+		emit_signal("finished_move", self)
 		return
 	
 	var next_tile_coords: Vector2i = path[path_index]

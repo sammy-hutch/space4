@@ -13,15 +13,17 @@ var teams: Dictionary = {
 	"blue": {
 		"team_name": null,
 		"type": null,
+		"turn": 0,
 		"soldiers": {}
 	},
 	"red": {
 		"team_name": null,
 		"type": null,
+		"turn": 0,
 		"soldiers": {}
 	}
 }
-var turn: String
+var active_team: String
 
 @onready var map_node: Node2D
 @onready var camera_2d: Camera2D = $Camera2D
@@ -39,7 +41,8 @@ func _ready() -> void:
 	spawn_soldiers("red", 5)
 	
 	# set first turn to blue player
-	start_turn("blue")
+	active_team = "blue"
+	start_turn(active_team)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -69,8 +72,33 @@ func generate_new_map():
 
 ###### TURN MGMT FUNCTIONS ######
 func start_turn(team: String):
+	teams[team]["turn"] += 1
 	for soldier in teams[team]["soldiers"].values():
 		soldier.ready_soldier()
+	if teams[team]["type"] == "computer":
+		ai_turn()
+
+func check_turn_end():
+	var all_moved = true
+	for soldier in teams[active_team]["soldiers"].values():
+		if soldier.available:
+			all_moved = false
+			break
+	if all_moved:
+		end_turn()
+
+func end_turn():
+	for soldier in teams[active_team]["soldiers"].values():
+		soldier.unready_soldier()
+	var new_team = ""
+	if active_team == "blue":
+		new_team = "red"
+	elif active_team == "red":
+		new_team = "blue"
+	else:
+		printerr("invalid value assigned to whos_turn var: %s" % active_team)
+	active_team = new_team
+	start_turn(active_team)
 
 ###### SOLDIER MGMT FUNCTIONS ######
 func spawn_soldiers(team, count):
@@ -82,6 +110,7 @@ func spawn_soldiers(team, count):
 		new_soldier.name = team + "_%d" % number
 		new_soldier.team = team
 		add_child(new_soldier)
+		new_soldier.finished_move.connect(_on_soldier_finished)
 		count -= 1
 
 func register_soldier(soldier_node: Node):
@@ -122,3 +151,13 @@ func get_soldiers_data():
 
 func get_teams_data():
 	return teams
+
+
+###### AI FUNCTIONS ######
+func ai_turn():
+	end_turn()
+
+
+###### SIGNAL FUNCTIONS ######
+func _on_soldier_finished(soldier_node):
+	check_turn_end()
