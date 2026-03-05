@@ -12,7 +12,7 @@ Each type should have a dict referencing which traits it can inherit
     - ammo
     - fire rate
     - weight
-    - accuracy (perhaps an angle that grows as target is further away)
+    - accuracy (attack angle) (perhaps an angle that grows as target is further away)
     - ease of use: how quick it is to swap out (e.g. a weapon with a strap can be quickly slung onto back)
 - armor
     - weight
@@ -50,6 +50,7 @@ Each type should have a dict referencing which traits it can inherit
 Similar to into the breach, on your turn you can choose to activate your units in any order by clicking them (clicking them again to deactivate them). 
 Once activated, you have the options of what to do with this specific unit: movement options, attack options, etc
 Maybe each unit needs to move before it attacks, or at least making an attack would end its turn
+Perhaps the more you move, the wider your attack angle becomes (faster movement = less accurate shooting)
 
 Shooting steps:
 1. A shoots at B
