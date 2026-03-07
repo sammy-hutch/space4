@@ -1,0 +1,9 @@
+# Geb
+
+Clinging to the cliff-face, Geb suddenly realised that one wrong move would not only cost him his life, but likely also mean the total collapse of the [hegira], and extinction of most of the galaxy's cultures and civilisations. 
+
+Mere moments earlier he had been scrambling across the rough rocks and tufts of weeds that  fringed the ridge, [cyborgs] hot on his heels and [bioweapon bullets] whizzing past his head. A few more moments before that he had been struggling out from the wreck of his escape pod as it quivered from the blows of [mechanical bullet] fired from the oncoming [cyborgs]. Despite landing after him, they had mobilised impossibly fast and were already advancing on his position by the time he had mannaged to unfasten the safety net which pinned him against the hull. A few minutes prior to that, Geb had been arguing with the obstinate and primitive escape pod on-board computer. The auto-pilot preferred the odds of the grassy slobes of the north mountain side, whilst his military instinct told him to chance it with the steeper south side and the rocky ravine below. As they plummeted down, their tug of war had positioned the directly on course for the precipice itself, the worst possible option as the ricochet from there would undobtedly mean an explosive landing at the bottom of the ravine. A stray shot from the persuing [cyborg's] ship had nudged them north wards and settled the debate
+
+An opportunistic [bioweapon bullet] flared past him and crashed into the scree at the bottom of the cliff-face, some hundred standard units below. Despite all the chaos of the last few hours, the ever-present threat of bullets was constant.
+
+A sudden pang of guilt struck Geb. As a representative of [enviro org], he practiced what he preached, perhaps more than most, and would always try to find the most environmentally conscious path for any action...
