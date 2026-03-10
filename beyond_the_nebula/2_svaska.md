@@ -1,3 +1,3 @@
 # Svaska
 
-Svaska glanced warily at the fleshy object sitting against her wall.
+Svaska glanced warily at the fleshy object slumped against her wall.
